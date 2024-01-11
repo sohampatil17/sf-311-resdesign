@@ -1,0 +1,307 @@
+body, html, .form-container h2 {
+    height: 100%;
+    margin: 0;
+    font-family: 'Helvetica Neue', sans-serif;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    font-size: small;
+}
+
+input, select, textarea, button, label, span, h2, p, a {
+    font-family: 'Helvetica Neue', sans-serif;
+    font-weight: bold;
+    height: 100%;
+    margin: 0;
+    font-size: small;
+}
+
+#map {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: -1;
+}
+
+.form-container {
+    background: rgba(250, 248, 247, 0.85);
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    width: 500px;
+    max-width: 90%;
+    z-index: 10;
+    position: relative;
+    max-height: 100vh;
+    overflow-y: auto;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.toggle-container {
+    display: none;
+}
+
+.form-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 24px;
+    padding: 40px
+}
+
+input, select, textarea {
+    box-sizing: border-box;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: calc(100% - 22px);
+    margin-bottom: 10px;
+}
+
+.form-container textarea {
+    resize: vertical;
+    height: 150px;
+}
+
+button, input[type="submit"] {
+    background-color: #9cc4e2; /* Light blue background */
+    color: white; /* White text color */
+    border: none; /* No border */
+    padding: 15px; /* Padding inside the button */
+    font-size: 16px; /* Font size */
+    cursor: pointer; /* Cursor changes to pointer when hovered over the button */
+    transition: background-color 0.3s; /* Transition effect for background color change */
+    border-radius: 4px; /* Rounded corners */
+    width: calc(100% - 22px); /* Width calculation */
+    margin-top: 0;
+    margin-bottom: 20px; /* Margin at the bottom */
+}
+
+/* Hover effect for both 'Submit' and 'Next' buttons */
+button:hover, input[type="submit"]:hover {
+    background-color: #4985b3; /* Darker shade of blue on hover */
+}
+
+.image-upload-options {
+    display: flex; 
+    justify-content: flex-start;  
+    align-items: left; 
+    gap: 10px; 
+    margin-bottom: 20px;
+}
+
+.image-upload-icon {
+    width: 60px;
+    height: auto;
+    display: block;
+}
+
+#image-preview-container {
+    display: none;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.delete-image {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: red; /* Red background for the cross */
+    color: white; /* White color for the cross text */
+    border: none;
+    cursor: pointer;
+    width: 25px; /* Set the width as desired */
+    height: 25px; /* Set the height as desired */
+    border-radius: 50%; /* Optional: makes it a circle */
+    text-align: center; /* Center the text ('X') inside the button */
+    line-height: 25px; /* Align the text ('X') vertically */
+    font-size: 20px; /* Size of the 'X' text */
+    font-weight: bold; /* Makes the 'X' text bold */
+    padding: 0; /* Resets any padding */
+    box-sizing: border-box; /* Ensures the width and height are properly calculated */
+    display: flex; /* Use flexbox for centering */
+    align-items: center; /* Center the content vertically */
+    justify-content: center; /* Center the content horizontally */
+    overflow: hidden; /* Ensures nothing spills out of the button */
+    z-index: 10; /* Ensure it's above the image */
+}
+
+.image-wrapper:hover .delete-image {
+    display: flex; /* Only show the delete button on hover */
+}
+
+.image-wrapper {
+    position: relative; /* Needed to position the delete button absolutely within the wrapper */
+    display: inline-block; /* Display image previews inline */
+    margin: 5px; /* Provide some space around the image wrapper */
+}
+
+.image-preview {
+    display: block; /* Display the image as a block */
+    max-width: 100px; /* Maximum width of the image preview */
+    max-height: 100px; /* Maximum height of the image preview */
+    width: auto; /* Maintain aspect ratio */
+    height: auto; /* Maintain aspect ratio */
+    border-radius: 4px; /* Optional: rounds the corners of the image */
+}
+
+@media (max-width: 600px) {
+    .form-container {
+        padding: 20px;
+        width: 100%;
+        margin: 20px;
+        box-shadow: none;
+    }
+
+    .image-upload-icon {
+        width: 60px;
+    }
+}
+
+.image-upload-options {
+    display: flex; /* This will display the children (camera and gallery buttons) in a row */
+    justify-content: center; /* This will center them in the container */
+    align-items: center; /* This will vertically center them in case they are of different heights */
+    gap: 10px; /* This adds some space between the buttons */
+}
+
+/* Ensure the labels (which act as buttons) are not taking the full width */
+.image-upload-options label {
+    flex: none; /* This will prevent the labels from growing and only take as much space as needed */
+    cursor: pointer; /* To show a pointer cursor on hover */
+}
+
+/* Optional: If you want to ensure the icons inside the labels are centered */
+.image-upload-icon {
+    display: block; /* This will allow you to apply margin auto */
+    margin: auto; /* This will center the icon horizontally inside the label */
+}
+
+
+.toggle-label {
+    display: inline-block; /* Align label next to the toggle switch */
+    margin-right: 5px; /* Spacing between the label and the toggle switch */
+}
+
+.toggles-container {
+    text-align: center; /* Center the toggle containers */
+}
+
+.toggle-container {
+    display: inline-block; /* Display toggle containers on the same line */
+    margin-right: 20px; /* Spacing between toggle containers if needed */
+}
+
+.toggle-switch {
+    position: relative;
+    display: inline-block; /* Align the slider next to the checkbox */
+    width: 30px;
+    height: 17px;
+    vertical-align: middle; /* Align vertically with the label */
+}
+
+.toggle-switch input { 
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 13px;
+    width: 13px;
+    left: 2px;
+    bottom: 2px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+input:checked + .slider {
+    background-color: #2196F3;
+}
+
+input:focus + .slider {
+    box-shadow: 0 0 0.5px #2196F3;
+}
+
+input:checked + .slider:before {
+    -webkit-transform: translateX(13px);
+    -ms-transform: translateX(13px);
+    transform: translateX(13px);
+}
+
+.slider.round {
+    border-radius: 12px;
+}
+
+.slider.round:before {
+    border-radius: 35%;
+}
+
+.image-upload-options {
+    text-align: center; /* Center the icons if desired */
+}
+
+.close-btn {
+    padding: 5px 10px; /* Smaller padding */
+    font-size: 12px; /* Smaller font size */
+    line-height: 1; /* Default line height */
+    border: none; /* No border */
+    background-color: #ccc; /* Light gray background */
+    color: #333; /* Darker text color */
+    border-radius: 5px; /* Slightly rounded corners */
+    cursor: pointer; /* Cursor changes to pointer on hover */
+    box-shadow: none; /* No box-shadow */
+    text-align: center; /* Center the text inside the button */
+    display: inline-block; /* Required for width and padding to work */
+    margin: 0; /* Reset any margin */
+}
+.close-btn:hover {
+    background-color: #bbb; /* Slightly darker background on hover */
+}
+
+/* Add this to your CSS file or within a <style> tag in your HTML file */
+.required::after {
+    content: " *"; /* This adds an asterisk after the label text */
+    color: red; /* Change the color to red or any color that stands out on your form */
+    font-weight: bold; /* Make the asterisk bold to ensure it catches the user's attention */
+}
+
+/* To ensure that the label text and the asterisk are aligned correctly */
+label.required {
+    display: inline-block;
+    margin-right: 5px; /* Adjust the right margin if needed */
+    font-weight: bold; /* Optional: adjust the weight of the label text if required */
+}
+
+.photo-tip, .submit-tip, .info-tip {
+    font-size: 12px; /* Smaller font size for the tip text */
+    color: #666; /* Lighter text color for the tip text */
+    margin-bottom: 10px; /* Space before the image upload section */
+    line-height: 1.5; /* Spacing between lines of text */
+    text-align: left; /* Align text to the left */
+}

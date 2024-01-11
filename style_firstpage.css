@@ -1,0 +1,59 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    position: relative;
+  }
+  
+  header {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+  }
+  
+  #city-logo {
+    /* Adjust the size of your city logo as needed */
+    height: 60px;
+    margin-left: 10px;
+  }
+  
+  .help-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    margin-right: 10px;
+  }
+  
+  .help-btn img {
+    width: 50px; /* Adjust as needed */
+  }
+  
+  #submit-btn {
+    position: absolute;
+    left: 50%;
+    bottom: 10%; /* Adjust the percentage as needed to move the button up or down */
+    transform: translateX(-50%);
+    /* Rest of your button styling */
+  }
+  
+  /* Ensure the map takes up the entire background */
+  #map {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
+  
+  /* Add responsive design as needed */
+  @media (max-width: 600px) {
+    #submit-btn {
+      /* Adjust the button size for smaller screens */
+    }
+  }
+  

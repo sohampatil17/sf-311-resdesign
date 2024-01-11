@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Summary Form</title>
+  <link rel="stylesheet" type="text/css" href="style_info.css">
+</head>
+<body>
+  <script>
+    async function showSummary() {
+      var category = JSON.parse(localStorage.getItem('category')) || 'N/A';
+      var object = JSON.parse(localStorage.getItem('object')) || 'N/A';
+      var description = JSON.parse(localStorage.getItem('description')) || 'N/A';
+      var name = JSON.parse(localStorage.getItem('name')) || 'N/A';
+      var phone = JSON.parse(localStorage.getItem('phone')) || 'N/A';
+      var email = JSON.parse(localStorage.getItem('email')) || 'N/A';
+      var address = JSON.parse(localStorage.getItem('address')) || 'N/A';
+      var reports = JSON.parse(localStorage.getItem('reports')) || [];
+      var date = new Date();
+      var casenum = reports.length + 1 || 'N/A';
+
+      var summaryContent = `
+        <h2>Report Summary</h2>
+        <p><strong>Category:</strong> ${category}</p>
+        <p><strong>Object:</strong> ${object}</p>
+        <p><strong>Data:</strong> ${description}</p>
+        <p><strong>Name:</strong> ${name}</p>
+        <p><strong>Phone:</strong> ${phone}</p>
+        <p><strong>Email:</strong> ${email}</p>
+        <p><strong>Home address:</strong> ${address}</p>
+        <p><strong>Case Number:</strong> ${casenum}</p>
+        <p><strong>Date:</strong> ${date}</p>
+      `;
+
+      // Display the summary on the page
+      document.body.innerHTML = summaryContent;
+    }
+
+    showSummary();
+  </script>
+</body>
+</html>

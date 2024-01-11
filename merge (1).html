@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complaint Form</title>
+    <link rel="stylesheet" type="text/css" href="style_twoandthree.css">
+    <!-- Include the Mapbox scripts -->
+    <script src='https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.css' rel='stylesheet' />
+</head>
+<body>
+
+    <div id="emergencyPopup" style="display:none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.5); z-index: 100;">
+        <h2 style="font-size: 18px; font-weight: bold;">Call 911 if you think this is an emergency</h2>
+        <br><br>
+        <button class="close-btn" onclick="document.getElementById('emergencyPopup').style.display='none'">Close</button>
+    </div>
+
+    <!-- Map placeholder -->
+    <div id="map"></div>
+
+    <!-- First form (HTML file 2) -->
+    <div class="form-container" id="complaint-form-container">
+        <form id="complaintForm">
+        
+            <div class="toggles-container">
+                <div class="toggle-container">
+                    <span class="toggle-label">Emergency</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="emergency" name="emergency">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+            </div>
+            <br><br>
+    
+            <label for="category"></label>
+            <select id="category" name="category" onchange="updateObjects();">
+                <option value="" disabled selected>Select a Service</option>
+                <option value="noise_issue">Noise Issue</option>
+                <option value="tree_maintenance">Tree Maintenance</option>
+                <option value="park_requests">Park Requests</option>
+                <option value="holiday_tree_removal">Holiday Tree Removal</option>
+                <option value="street_sidewalk_cleaning">Street or Sidewalk Cleaning</option>
+                <option value="garbage_containers">Garbage Containers</option>
+                <option value="graffiti">Graffiti</option>
+                <option value="illegal_postings">Illegal Postings</option>
+                <option value="blocked_pedestrian_walkway">Blocked Pedestrian Walkway</option>
+                <option value="encampment">Encampment</option>
+                <option value="abandoned_vehicles">Abandoned Vehicles</option>
+                <option value="blocked_driveway_illegal_parking">Blocked Driveway & Illegal Parking</option>
+                <option value="muni_employee_feedback">Muni Employee Feedback</option>
+                <option value="muni_service_feedback">Muni Service Feedback</option>
+                <option value="curb_sidewalk_issues">Curb & Sidewalk Issues</option>
+                <option value="damaged_public_property">Damaged Public Property</option>
+                <option value="flooding_sewer_water_leak_issues">Flooding, Sewer & Water Leak Issues</option>
+                <option value="parking_traffic_sign_repair">Parking & Traffic Sign Repair</option>
+                <option value="pothole_street_issues">Pothole & Street Issues</option>
+                <option value="streetlight_repair">Streetlight Repair</option>
+            </select>
+            <br>
+    
+    
+            <label for="object"></label>
+            <select id="object" name="object">
+                <option value="" disabled selected>Select an Object</option>
+            </select>
+            <br>
+    
+    
+            <label for="description"></label>
+            <textarea id="description" name="description" placeholder="Describe your complaint (include object/ person/ vehicle/ street information in as much detail as you can)"></textarea>
+            <br>
+
+            <p class="photo-tip">Photo tip: You can include up to 3 photos, it really helps! Showing the surrounding area helps workers locate the issue. Photos and description are public information.</p>
+    
+            <div class="image-upload-options">
+                <label for="cameraInput">
+                    <img src="/Users/soham/Desktop/Research/ImpactLabs/final 2/cam.png" alt="Camera" class="image-upload-icon">
+                    <input type="file" id="cameraInput" name="camera" accept="image/*" capture="user" multiple style="display: none;">
+                </label>
+                <label for="galleryInput">
+                    <img src="/Users/soham/Desktop/Research/ImpactLabs/final 2/gall.png" alt="Gallery" class="image-upload-icon">
+                    <input type="file" id="galleryInput" name="gallery" accept="image/*" multiple style="display: none;">
+                </label>
+            </div>
+            
+            <div id="image-preview-container" style="display:none;">
+            </div>
+            <br>
+    
+            <div class="toggles-container">
+                <div class="toggle-container">
+                    <span class="toggle-label">Anonymous</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="anonymous" name="anonymous">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+            </div>
+            <br>
+
+        <p class="info-tip">311 will forward your request to the appropriate agency. The response agency will handle the closure of requests, not 311.</p>
+        <br><br>
+
+        <button type="button" id="nextButton">Next</button>
+        </form>
+    </div>
+
+    <!-- Second form (HTML file 1), initially hidden -->
+    <div class="form-container" id="contact-form-container" style="display: none;">
+        <!-- Start of the contact form -->
+        <h3>Your Contact Information</h3>
+        <h5>Fields marked with * are required.</h5>
+        <p class="submit-tip">Contact information will be used to provide case status update.
+        <form action="/submit-contact-info" method="post">
+            <br>
+            <label for="name" class="required">Legal Name</label>
+            <input type="text" id="name" name="name" required>
+
+            <br>
+            <label for="phone">Phone</label>
+            <input type="text" id="phone" name="phone" required>
+            <br>
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email">
+            <br>
+            <label for="address">Home Address</label>
+            <input type="text" id="address" name="address">            
+            <br><br>
+            <button type="submit" id="submit">Submit</button>
+           
+        </form>
+    </div>
+   
+    <!-- Your script to initialize the map -->
+    <script>
+        mapboxgl.accessToken = 'pk.eyJ1IjoiY3R1MiIsImEiOiJjbHIxZGtsb2QwM3E5MmxwYWFrYmhpM2FvIn0.tQu04O4_IwvPWkNRnhjHxA '; 
+        var map = new mapboxgl.Map({
+            container: 'map', // container ID
+            style: 'mapbox://styles/mapbox/streets-v11', // style URL
+            center: [-122.4194, 37.7749], // starting position [lng, lat]
+            zoom: 12 // starting zoom
+        });
+    </script>
+
+    <!-- JavaScript to handle the Next button click -->
+    <script>
+        document.getElementById('nextButton').addEventListener('click', function() {
+        var isAnonymousChecked = document.getElementById('anonymous').checked;
+            localStorage.setItem('name', document.getElementById('name'))
+            localStorage.setItem('phone', document.getElementById('phone'))
+            localStorage.setItem('email', document.getElementById('email'))
+            localStorage.setItem('address', document.getElementById('address'))
+
+            if(isAnonymousChecked) {
+                
+                window.location.href = '4.html';
+                // If the user chose to be anonymous, you may want to submit the form
+                // or navigate to a confirmation page. Here, we'll just log to the console.
+                console.log('Anonymous submission, proceed without showing contact form.');
+                
+                // Here you might want to handle the anonymous submission
+                // For example, submit the form data to your server
+                // You can use AJAX or fetch API to submit without navigating away from the page
+                
+                // If you want to redirect to a thank you page, uncomment the line below
+                // window.location.href = 'thank-you-page.html'; 
+                
+            } else {
+                
+                // If not anonymous, show the contact information form
+            document.getElementById('complaint-form-container').style.display = 'none';
+            document.getElementById('contact-form-container').style.display = 'block';
+            }
+        });
+    </script>
+    <script>
+        document.getElementById('submit').addEventListener('click', function() {
+            localStorage.setItem('category', document.getElementById('category'))
+            localStorage.setItem('object', document.getElementById('object'))
+            localStorage.setItem('description', document.getElementById('description'))
+            window.location.href = '4.html';
+                // If the user chose to be anonymous, you may want to submit the form
+                // or navigate to a confirmation page. Here, we'll just log to the console.
+               
+                // Here you might want to handle the anonymous submission
+                // For example, submit the form data to your server
+                // You can use AJAX or fetch API to submit without navigating away from the page
+                
+                // If you want to redirect to a thank you page, uncomment the line below
+                // window.location.href = 'thank-you-page.html'; 
+                
+            
+        });
+    </script>
+    <script>
+
+        document.getElementById('emergency').addEventListener('change', function() {
+            var isChecked = document.getElementById('emergency').checked;
+            var popup = document.getElementById('emergencyPopup');
+            
+            if(isChecked) {
+                // Show the popup
+                popup.style.display = 'block';
+            } else {
+                // Hide the popup
+                popup.style.display = 'none';
+            }
+        });
+
+        const categoryToObjectMap = {
+            "tree_maintenance": ["Damaging Property", "Damaged Tree", "Overgrown Tree", "Landscaping", "Vandalized Tree", "Sidewalk Defect - Lifted by roots", "Other"],
+            "blocked_driveway_illegal_parking": [
+                "Blocking My Driveway - Cite Only",
+                "Blocking My Driveway - Cite and Tow",
+                "Blocking Bike Lane (Info Only)",
+                "Double Parking (Info Only)",
+                "Parking on Sidewalk",
+                "Other Illegal Parking"
+            ],
+            "muni_service_feedback": [
+            "Praise: Muni Service",
+            "Complaint: Payment",
+            "Complaint: Delay",
+            "Complaint: NextBus Prediction",
+            "Complaint: Station Passed Up",
+            "Maintenance Issue: Bus Stop",
+            "Maintenance Issue: Metro Station",
+            "Maintenance Issue: Vehicle",
+            "Other (Comment or Suggestion)"
+        ],
+            "street_sidewalk_cleaning": [
+                "Transit Shelter/Platform",
+                "Electronics/E-Waste",
+                "Furniture",
+                "Glass",
+                "Human / Animal Waste",
+                "Mattress",
+                "Medical Waste",
+                "Neglected Building (Blight)",
+                "Oil / Paint / Other Spill",
+                "Overflowing Public Garbage Can",
+                "Overgrown Lot (Blight)",
+                "Refrigerator / Appliance",
+                "Shopping Cart"
+            ],
+            "garbage_containers": [
+                "Transit Shelter/Platform",
+                "Add/Remove/Public Garbage Can",
+                "Tipped Over Public Garbage Can",
+                "Damaged Public Garbage Can",
+                "Overflowing Public Garbage Can",
+                "Toter Left out 24 x 7"
+            ],
+            "park_requests": [
+                "Facility Lockout",
+                "Gardening Request",
+                "Graffiti",
+                "Irrigation/Flooding",
+                "Lost and Found",
+                "Pathway Issue",
+                "Rules Violation",
+                "Signage Issue",
+                "Structure/Equipment Issue",
+                "Trash/Dumping",
+                "Tree Issue",
+                "Any Other Issue"
+            ],
+            "graffiti": [
+                "City receptacle",
+                "Fire/Police Callbox",
+                "Fire hydrant",
+                "Mail box",
+                "News Rack",
+                "Parking meter",
+                "Sidewalk",
+                "Sign (parking and traffic only)",
+                "Sign (advertisement/other)",
+                "Signal box",
+                "Street",
+                "Transit Shelter",
+                "Other"
+            ],
+            "park_requests": [
+                "Facility Lockout",
+                "Gardening Request",
+                "Graffiti",
+                "Irrigation/Flooding",
+                "Lost and Found",
+                "Pathway Issue",
+                "Rules Violation",
+                "Signage Issue",
+                "Structure/Equipment Issue",
+                "Trash/Dumping",
+                "Tree Issue",
+                "Any Other Issue"
+            ],
+            "blocked_pedestrian_walkway": [
+                "Bikeshare Bicycles",
+                "Cafe table and chairs",
+                "Construction equipment",
+                "Display merchandise",
+                "Dumpster",
+                "News Rack",
+                "Port A Potty",
+                "Residential toter",
+                "Scooter",
+                "Tree shrub bush privately maintained",
+                "Other"
+            ],
+            "muni_employee_feedback": [
+                "Praise: Muni Employee",
+                "Complaint: Discourteous/Rude",
+                "Complaint: Driver Distracted",
+                "Complaint: Ignored Stop Request",
+                "Complaint: Station Passed Up",
+                "Complaint: Unsafe Driving",
+                "Other (Comment or Suggestion)"
+            ],
+            "curb_sidewalk_issues": [
+                "Curb or Curb Ramp Defect",
+                "Color Curb - Faded/Defaced",
+                "Side Sewer Vent Cover - Damaged",
+                "Side Sewer Vent Cover - Missing",
+                "Public Stairway Defect",
+                "Sidewalk Defect - Collapsed/Cracked",
+                "Sidewalk Defect - Lifted by Roots",
+                "Sidewalk Defect - Other",
+                "Other"
+            ], 
+            "damaged_public_property": [
+                "Benches on Sidewalk",
+                "Bike Rack",
+                "Fire/Police Callbox",
+                "Kiosk/Public Toilet",
+                "News Rack",
+                "Parking Meter",
+                "Safe-Hit Posts",
+                "Transit Shelter/Platform",
+                "Other"
+            ],
+            "flooding_sewer_water_leak_issues": [
+                "Flooding - at Parklet/Platform",
+                "Flooding - On Property",
+                "Flooding - On Street",
+                "Odor - Catch Basin",
+                "Odor - 4 inch sewer vent",
+                "Odor - other location",
+                "Sewage back up - Catch Basin",
+                "Sewage back up - 4 inch sewer vent",
+                "Sewage back up - Manhole cover",
+                "Water Leak - Fire Hydrant",
+                "Maintenance - Catch Basin",
+                "Other"
+            ],
+            "parking_traffic_sign_repair": [
+                "Bent",
+                "Defaced",
+                "Faded",
+                "Incorrect Signage",
+                "Missing/Hanging",
+                "Other"
+            ],
+            "pothole_street_issues": [
+                    "Bike Lane/Box - Faded/Defaced",
+                    "Construction Plate Shifted",
+                    "Crosswalk - Faded/Defaced",
+                    "Manhole Cover Off",
+                    "Street Defect (Pothole)",
+                    "Street Lane Markers/Wording",
+                    "Utility Excavation",
+                    "Other"
+        ],
+            "streetlight_repair": [
+                    "Light Burnt Out",
+                    "Light Flickering On/Off",
+                    "Light Dim",
+                    "Light Always On",
+                    "Electrical Wires Exposed",
+                    "Request Light Shield",
+                    "Request New Streetlight",
+                    "Other"
+        ],
+        };
+
+        function handleImageChange(event) {
+            const files = event.target.files;
+            const previewContainer = document.getElementById('image-preview-container');
+            // Do not clear the previews here if you want to keep the existing ones
+            // previewContainer.innerHTML = '';
+
+            Array.from(files).forEach((file, index) => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const imageWrapper = document.createElement('div');
+                    imageWrapper.className = 'image-wrapper';
+
+                    const imgPreview = document.createElement('img');
+                    imgPreview.src = e.target.result;
+                    imgPreview.className = 'image-preview';
+
+                    const deleteButton = document.createElement('button');
+                    deleteButton.textContent = 'X';
+                    deleteButton.className = 'delete-image';
+                    deleteButton.onclick = function() {
+                        previewContainer.removeChild(imageWrapper);
+                        // This will not update the file list in the input
+                        // You need additional logic if you want to handle the input file list
+                    };
+
+                    imageWrapper.appendChild(imgPreview);
+                    imageWrapper.appendChild(deleteButton);
+                    previewContainer.appendChild(imageWrapper);
+                };
+                reader.readAsDataURL(file);
+            });
+
+            previewContainer.style.display = 'flex'; // Use 'flex' to accommodate multiple images
+        }
+
+        document.getElementById('cameraInput').addEventListener('change', handleImageChange);
+        document.getElementById('galleryInput').addEventListener('change', handleImageChange);
+
+        function updateObjects() {
+            const categorySelect = document.getElementById('category');
+            const objectSelect = document.getElementById('object');
+            const selectedCategory = categorySelect.value;
+
+            // Clear existing options
+            objectSelect.innerHTML = '';
+
+            // Get the objects for the selected category
+            const objects = categoryToObjectMap[selectedCategory] || [];
+
+            // Create a default option
+            const defaultOption = document.createElement('option');
+            defaultOption.value = '';
+            defaultOption.textContent = 'Select an Object';
+            defaultOption.disabled = true;
+            defaultOption.selected = true;
+            objectSelect.appendChild(defaultOption);
+
+            // Add new options
+            objects.forEach(function(object) {
+                const option = document.createElement('option');
+                option.value = object.replace(/ /g, '_').toLowerCase(); // Convert to a value format
+                option.textContent = object;
+                objectSelect.appendChild(option);
+            });
+        }
+        mapboxgl.accessToken = 'pk.eyJ1IjoiY3R1MiIsImEiOiJjbHIxZGtsb2QwM3E5MmxwYWFrYmhpM2FvIn0.tQu04O4_IwvPWkNRnhjHxA ';
+        var map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/mapbox/streets-v11',
+            center: [-122.4194, 37.7749],
+            zoom: 12
+        });
+    </script>
+
+</body>
+</html>
